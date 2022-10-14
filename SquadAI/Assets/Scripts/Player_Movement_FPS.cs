@@ -128,4 +128,9 @@ public class Player_Movement_FPS : MonoBehaviour
     {
         in_tactical = !in_tactical;
     }
+
+    public bool InTacticalCam()
+    {
+        return in_tactical;
+    }
 }

@@ -44,6 +44,24 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""9c4870a5-99f2-43e3-a359-e2296a70cfdc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Deselect"",
+                    ""type"": ""Button"",
+                    ""id"": ""43d0ef97-8978-47fd-a4cb-73a0685ec194"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -112,6 +130,28 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""93a1b379-cf5a-4bfe-8aef-fc2c72e59f9c"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d1bd1c94-ac2a-4e6d-9882-c6d0283155dc"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Deselect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -132,6 +172,15 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""name"": ""Movement"",
                     ""type"": ""Value"",
                     ""id"": ""c0825c43-a396-4839-be33-c379c269128e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""ae111889-e5c1-4763-b9e1-92fe2d897dd0"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -204,6 +253,17 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c248f6bf-8bc9-4d19-a571-ba70c4586de6"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -214,10 +274,13 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+        m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
+        m_Player_Deselect = m_Player.FindAction("Deselect", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Switch = m_Camera.FindAction("Switch", throwIfNotFound: true);
         m_Camera_Movement = m_Camera.FindAction("Movement", throwIfNotFound: true);
+        m_Camera_Look = m_Camera.FindAction("Look", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -279,12 +342,16 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
+    private readonly InputAction m_Player_Select;
+    private readonly InputAction m_Player_Deselect;
     public struct PlayerActions
     {
         private @PlayerInputController m_Wrapper;
         public PlayerActions(@PlayerInputController wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Look => m_Wrapper.m_Player_Look;
+        public InputAction @Select => m_Wrapper.m_Player_Select;
+        public InputAction @Deselect => m_Wrapper.m_Player_Deselect;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -300,6 +367,12 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Look.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
                 @Look.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
                 @Look.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
+                @Select.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSelect;
+                @Select.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSelect;
+                @Select.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSelect;
+                @Deselect.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDeselect;
+                @Deselect.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDeselect;
+                @Deselect.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDeselect;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -310,6 +383,12 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
+                @Select.started += instance.OnSelect;
+                @Select.performed += instance.OnSelect;
+                @Select.canceled += instance.OnSelect;
+                @Deselect.started += instance.OnDeselect;
+                @Deselect.performed += instance.OnDeselect;
+                @Deselect.canceled += instance.OnDeselect;
             }
         }
     }
@@ -320,12 +399,14 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
     private ICameraActions m_CameraActionsCallbackInterface;
     private readonly InputAction m_Camera_Switch;
     private readonly InputAction m_Camera_Movement;
+    private readonly InputAction m_Camera_Look;
     public struct CameraActions
     {
         private @PlayerInputController m_Wrapper;
         public CameraActions(@PlayerInputController wrapper) { m_Wrapper = wrapper; }
         public InputAction @Switch => m_Wrapper.m_Camera_Switch;
         public InputAction @Movement => m_Wrapper.m_Camera_Movement;
+        public InputAction @Look => m_Wrapper.m_Camera_Look;
         public InputActionMap Get() { return m_Wrapper.m_Camera; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -341,6 +422,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Movement.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnMovement;
                 @Movement.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnMovement;
                 @Movement.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnMovement;
+                @Look.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnLook;
+                @Look.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnLook;
+                @Look.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnLook;
             }
             m_Wrapper.m_CameraActionsCallbackInterface = instance;
             if (instance != null)
@@ -351,6 +435,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Movement.started += instance.OnMovement;
                 @Movement.performed += instance.OnMovement;
                 @Movement.canceled += instance.OnMovement;
+                @Look.started += instance.OnLook;
+                @Look.performed += instance.OnLook;
+                @Look.canceled += instance.OnLook;
             }
         }
     }
@@ -359,10 +446,13 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        void OnDeselect(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {
         void OnSwitch(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
+        void OnLook(InputAction.CallbackContext context);
     }
 }
