@@ -62,6 +62,15 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""StopGuard"",
+                    ""type"": ""Button"",
+                    ""id"": ""199f2b16-5daf-40cf-bfa7-8bc3b8b29760"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -152,6 +161,17 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""action"": ""Deselect"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d767c6f3-1850-4aba-bc69-b493264c6a86"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StopGuard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -182,6 +202,15 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""type"": ""Value"",
                     ""id"": ""ae111889-e5c1-4763-b9e1-92fe2d897dd0"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Rotation"",
+                    ""type"": ""Button"",
+                    ""id"": ""9dde813f-bcdb-4eb7-9e47-9e203f1290b0"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -264,6 +293,39 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""761c70b0-49f3-41f2-82c3-63d221609f48"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Negative"",
+                    ""id"": ""c5e4d05b-bebf-42ed-8c13-0f50951db3d1"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Positive"",
+                    ""id"": ""0c5171a5-1600-4afa-8384-c028e6fc57e7"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -276,11 +338,13 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
         m_Player_Deselect = m_Player.FindAction("Deselect", throwIfNotFound: true);
+        m_Player_StopGuard = m_Player.FindAction("StopGuard", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Switch = m_Camera.FindAction("Switch", throwIfNotFound: true);
         m_Camera_Movement = m_Camera.FindAction("Movement", throwIfNotFound: true);
         m_Camera_Look = m_Camera.FindAction("Look", throwIfNotFound: true);
+        m_Camera_Rotation = m_Camera.FindAction("Rotation", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -344,6 +408,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Select;
     private readonly InputAction m_Player_Deselect;
+    private readonly InputAction m_Player_StopGuard;
     public struct PlayerActions
     {
         private @PlayerInputController m_Wrapper;
@@ -352,6 +417,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Select => m_Wrapper.m_Player_Select;
         public InputAction @Deselect => m_Wrapper.m_Player_Deselect;
+        public InputAction @StopGuard => m_Wrapper.m_Player_StopGuard;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -373,6 +439,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Deselect.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDeselect;
                 @Deselect.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDeselect;
                 @Deselect.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDeselect;
+                @StopGuard.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStopGuard;
+                @StopGuard.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStopGuard;
+                @StopGuard.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStopGuard;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -389,6 +458,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Deselect.started += instance.OnDeselect;
                 @Deselect.performed += instance.OnDeselect;
                 @Deselect.canceled += instance.OnDeselect;
+                @StopGuard.started += instance.OnStopGuard;
+                @StopGuard.performed += instance.OnStopGuard;
+                @StopGuard.canceled += instance.OnStopGuard;
             }
         }
     }
@@ -400,6 +472,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
     private readonly InputAction m_Camera_Switch;
     private readonly InputAction m_Camera_Movement;
     private readonly InputAction m_Camera_Look;
+    private readonly InputAction m_Camera_Rotation;
     public struct CameraActions
     {
         private @PlayerInputController m_Wrapper;
@@ -407,6 +480,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         public InputAction @Switch => m_Wrapper.m_Camera_Switch;
         public InputAction @Movement => m_Wrapper.m_Camera_Movement;
         public InputAction @Look => m_Wrapper.m_Camera_Look;
+        public InputAction @Rotation => m_Wrapper.m_Camera_Rotation;
         public InputActionMap Get() { return m_Wrapper.m_Camera; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -425,6 +499,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Look.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnLook;
                 @Look.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnLook;
                 @Look.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnLook;
+                @Rotation.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnRotation;
+                @Rotation.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnRotation;
+                @Rotation.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnRotation;
             }
             m_Wrapper.m_CameraActionsCallbackInterface = instance;
             if (instance != null)
@@ -438,6 +515,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
+                @Rotation.started += instance.OnRotation;
+                @Rotation.performed += instance.OnRotation;
+                @Rotation.canceled += instance.OnRotation;
             }
         }
     }
@@ -448,11 +528,13 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         void OnLook(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
         void OnDeselect(InputAction.CallbackContext context);
+        void OnStopGuard(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {
         void OnSwitch(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+        void OnRotation(InputAction.CallbackContext context);
     }
 }

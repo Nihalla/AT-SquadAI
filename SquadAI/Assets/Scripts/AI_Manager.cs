@@ -21,6 +21,7 @@ public class AI_Manager : MonoBehaviour
         controls.Player.Select.performed += ctx => SelectCharacter();
         controls.Camera.Look.performed += ctx => mouse_pos = ctx.ReadValue<Vector2>();
         controls.Player.Deselect.performed += ctx => Deselect();
+        controls.Player.StopGuard.performed += ctx => Unguard();
         player = GameObject.FindGameObjectWithTag("Player");
         player_script = player.GetComponent<Player_Movement_FPS>();
 
@@ -52,8 +53,9 @@ public class AI_Manager : MonoBehaviour
     {
         if (!player_script.InTacticalCam())
         {
-            
-        }    
+
+            Deselect();
+        }
     }
 
     private void SelectCharacter()
@@ -70,11 +72,11 @@ public class AI_Manager : MonoBehaviour
 
                 if (selected_char == null && hit.transform.tag == "AI")
                 {
-                    selected_char = hit.transform;
-                    agent = selected_char.gameObject.GetComponent<NavMeshAgent>();
+                    AssignActiveChar(hit);
                 }
                 else if (selected_char != null && hit.transform.tag == "Floor")
                 {
+                    selected_char.gameObject.GetComponent<AI_State>().SetToGuard();
                     agent.destination = hit.point;
                 }
                 else if (selected_char == hit.transform)
@@ -83,16 +85,28 @@ public class AI_Manager : MonoBehaviour
                 }
                 else if (selected_char != hit.transform && hit.transform.tag == "AI")
                 {
-                    selected_char = hit.transform;
-                    agent = selected_char.gameObject.GetComponent<NavMeshAgent>();
+                    AssignActiveChar(hit);
                 }
             }
         }
     }
 
+    private void AssignActiveChar(RaycastHit hit)
+    {
+        selected_char = hit.transform;
+        agent = selected_char.gameObject.GetComponent<NavMeshAgent>();
+    }
     private void Deselect()
     {
-        selected_char = null;
-        agent = null;
+        if (selected_char != null)
+        {
+            selected_char = null;
+            agent = null;
+        }
     }
+    private void Unguard()
+    {
+        selected_char.gameObject.GetComponent<AI_State>().SetToIdle();
+    }
+
 }

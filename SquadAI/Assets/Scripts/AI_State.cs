@@ -34,11 +34,11 @@ public class AI_State : MonoBehaviour
         dist = Vector3.Distance(player.transform.position, this.gameObject.transform.position);
         if (!player.GetComponent<Player_Movement_FPS>().InTacticalCam())
         {
-            if (this.current_state != State.FOLLOWING)
+            if (this.current_state == State.IDLE)
             {
                 if (dist > 5f)
                 {
-                    Debug.Log("Distance is greater than 10 = " + dist + " and I am agent - " + this.gameObject.name);
+                    //Debug.Log("Distance is greater than 10 = " + dist + " and I am agent - " + this.gameObject.name);
                     SetToFollow();
                 }
             }
@@ -63,5 +63,15 @@ public class AI_State : MonoBehaviour
             this.current_state = State.IDLE;
             agent.destination = this.gameObject.transform.position;
         }
+    }
+
+    public void SetToGuard()
+    {
+        this.current_state = State.GUARDING;
+    }
+
+    public void SetToIdle()
+    {
+        this.current_state = State.IDLE;
     }
 }
