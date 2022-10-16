@@ -53,7 +53,6 @@ public class AI_Manager : MonoBehaviour
     {
         if (!player_script.InTacticalCam())
         {
-
             Deselect();
         }
     }
@@ -109,4 +108,5 @@ public class AI_Manager : MonoBehaviour
         selected_char.gameObject.GetComponent<AI_State>().SetToIdle();
     }
 
+    
 }

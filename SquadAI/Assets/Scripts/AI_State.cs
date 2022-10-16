@@ -9,6 +9,11 @@ public class AI_State : MonoBehaviour
     private GameObject player;
     private float dist = 0f;
     private NavMeshAgent agent;
+    public GameObject bullet;
+    private float attack_cd = 0.5f;
+    [SerializeField] private bool has_target = false;
+    [SerializeField] private GameObject target;
+    //private Collider line_of_sight;
 
     enum State
     {
@@ -26,6 +31,7 @@ public class AI_State : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         this.current_state = State.IDLE;
         agent = this.gameObject.GetComponent<NavMeshAgent>();
+        //line_of_sight = this.gameObject.GetComponent<BoxCollider>();
     }
 
     // Update is called once per frame
@@ -46,6 +52,19 @@ public class AI_State : MonoBehaviour
         if(this.current_state == State.FOLLOWING)
         {
             Follow();
+        }
+
+        if (has_target)
+        {
+            if (attack_cd <= 0)
+            {
+                Attack(target.gameObject);
+                attack_cd = 0.5f;
+            }
+            else
+            {
+                attack_cd -= Time.deltaTime;
+            }
         }
     }
 
@@ -73,5 +92,30 @@ public class AI_State : MonoBehaviour
     public void SetToIdle()
     {
         this.current_state = State.IDLE;
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log(other);
+        if (has_target == false && other.gameObject.tag == "Enemy")
+        {
+            target = other.gameObject;
+            has_target = true;
+        }
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == target)
+        {
+            has_target = false;
+        }
+    }
+
+    private void Attack(GameObject current_target)
+    {
+        gameObject.transform.LookAt(current_target.transform);
+        Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
+        Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);    
     }
 }

@@ -10,16 +10,19 @@ public class Player_Movement_FPS : MonoBehaviour
     public Vector2 move;
     public Vector2 look;
     public float deadzone = 0.1F;
-    public float speed = 10.0f;
+    public float speed = 5.0f;
     public float turn_smooth_time = 0.1f;
     private float turn_smooth_velocity = 0.5f;
     public float speed_multiplier = 1.0f;
     public float turn_speed_max = 1f;
+    private float jump_velocity = 0.0f;
+    public float gravity = 9.8f;
 
     CharacterController controller;
     public Transform cam_transform;
     private bool move_forward;
     private bool in_tactical = false;
+    public GameObject bullet;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -29,6 +32,7 @@ public class Player_Movement_FPS : MonoBehaviour
         controls.Player.Move.canceled += ctx => move = Vector2.zero;
         controls.Player.Look.performed += ctx => look = ctx.ReadValue<Vector2>();
         controls.Player.Look.canceled += ctx => look = Vector2.zero;
+        controls.Player.Shoot.performed += ctx => Shoot();
 
     }
 
@@ -68,7 +72,11 @@ public class Player_Movement_FPS : MonoBehaviour
                 Vector3 mouse_direction = new Vector3(look.x, 0, 0);
                 Vector3 rotate = RotateCalc(input_direction, cam_transform.eulerAngles.y, mouse_direction);
                 Vector3 movement = XZMoveCalc(rotate, input_direction);
-
+                if (!controller.isGrounded)
+                {
+                    jump_velocity -= (gravity * Time.deltaTime);
+                    movement.y = jump_velocity;
+                }
                 //movement.y = jump_velocity;
 
                 controller.Move(movement * Time.deltaTime);
@@ -81,9 +89,15 @@ public class Player_Movement_FPS : MonoBehaviour
                 Vector3 rotate = RotateCalc(new Vector3(0, 0, 0), cam_transform.eulerAngles.y, new Vector3(0, 0, 0));
                 Vector3 forward = Quaternion.Euler(rotate).normalized * Vector3.forward;
                 Vector3 movement = -forward * speed * speed_multiplier;
+                if (!controller.isGrounded)
+                {
+                    jump_velocity -= (gravity * Time.deltaTime);
+                    movement.y = jump_velocity;
+                }
                 controller.Move(movement * Time.deltaTime);
             }
         }
+        
     }
 
     private Vector3 RotateCalc(Vector3 input_direction, float anchor_rotation, Vector3 mouse_direction)
@@ -132,5 +146,14 @@ public class Player_Movement_FPS : MonoBehaviour
     public bool InTacticalCam()
     {
         return in_tactical;
+    }
+
+    private void Shoot()
+    {
+        if (!in_tactical)
+        {
+            Vector3 bullet_spawn = this.gameObject.transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).position;
+            Instantiate(bullet, bullet_spawn, transform.rotation);
+        }
     }
 }

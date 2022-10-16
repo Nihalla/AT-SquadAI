@@ -71,6 +71,15 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""4f194485-ed39-4deb-a416-f1c7a13c215a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -170,6 +179,17 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""StopGuard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4b8c700c-3f48-48a4-b7ae-28899c1fa904"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -339,6 +359,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
         m_Player_Deselect = m_Player.FindAction("Deselect", throwIfNotFound: true);
         m_Player_StopGuard = m_Player.FindAction("StopGuard", throwIfNotFound: true);
+        m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Switch = m_Camera.FindAction("Switch", throwIfNotFound: true);
@@ -409,6 +430,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
     private readonly InputAction m_Player_Select;
     private readonly InputAction m_Player_Deselect;
     private readonly InputAction m_Player_StopGuard;
+    private readonly InputAction m_Player_Shoot;
     public struct PlayerActions
     {
         private @PlayerInputController m_Wrapper;
@@ -418,6 +440,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         public InputAction @Select => m_Wrapper.m_Player_Select;
         public InputAction @Deselect => m_Wrapper.m_Player_Deselect;
         public InputAction @StopGuard => m_Wrapper.m_Player_StopGuard;
+        public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -442,6 +465,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @StopGuard.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStopGuard;
                 @StopGuard.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStopGuard;
                 @StopGuard.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStopGuard;
+                @Shoot.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnShoot;
+                @Shoot.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnShoot;
+                @Shoot.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnShoot;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -461,6 +487,9 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
                 @StopGuard.started += instance.OnStopGuard;
                 @StopGuard.performed += instance.OnStopGuard;
                 @StopGuard.canceled += instance.OnStopGuard;
+                @Shoot.started += instance.OnShoot;
+                @Shoot.performed += instance.OnShoot;
+                @Shoot.canceled += instance.OnShoot;
             }
         }
     }
@@ -529,6 +558,7 @@ public partial class @PlayerInputController : IInputActionCollection2, IDisposab
         void OnSelect(InputAction.CallbackContext context);
         void OnDeselect(InputAction.CallbackContext context);
         void OnStopGuard(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {
