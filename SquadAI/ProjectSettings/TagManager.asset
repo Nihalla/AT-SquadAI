@@ -8,6 +8,8 @@ TagManager:
   - Floor
   - Enemy
   - Cover
+  - Wall
+  - AI_Body
   layers:
   - Default
   - TransparentFX

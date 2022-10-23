@@ -7,29 +7,34 @@ public class AI_State : MonoBehaviour
 {
     [SerializeField] private State current_state;
     private GameObject player;
-    private float dist = 0f;
+    private float dist_to_player = 0f;
     private NavMeshAgent agent;
     public GameObject bullet;
     private float attack_cd = 0.5f;
+    private int max_health = 7;
+    [SerializeField] private int health;
+    public bool in_cover = false;
+    private float regen_timer = 10f;
     [SerializeField] private bool has_target = false;
     [SerializeField] private GameObject target;
     //private Collider line_of_sight;
 
-    enum State
+    public enum State
     {
         IDLE = 0,
         MOVING = 1,
         FOLLOWING = 2,
         GUARDING = 3,
-        ATTACKING = 4,
+        COVERING = 4,
         INVALID = -1
     };
 
     // Start is called before the first frame update
     void Awake()
     {
+        health = max_health;
         player = GameObject.FindGameObjectWithTag("Player");
-        this.current_state = State.IDLE;
+        current_state = State.IDLE;
         agent = this.gameObject.GetComponent<NavMeshAgent>();
         //line_of_sight = this.gameObject.GetComponent<BoxCollider>();
     }
@@ -37,24 +42,31 @@ public class AI_State : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        dist = Vector3.Distance(player.transform.position, this.gameObject.transform.position);
-        if (!player.GetComponent<Player_Movement_FPS>().InTacticalCam())
+        if (health <= 3)
         {
-            if (this.current_state == State.IDLE)
+            current_state = State.COVERING;
+        }
+        else
+        {
+            dist_to_player = Vector3.Distance(player.transform.position, this.gameObject.transform.position);
+            if (!player.GetComponent<Player_Movement_FPS>().InTacticalCam())
             {
-                if (dist > 5f)
+                if (current_state == State.IDLE)
                 {
-                    //Debug.Log("Distance is greater than 10 = " + dist + " and I am agent - " + this.gameObject.name);
-                    SetToFollow();
+                    if (dist_to_player > 5f)
+                    {
+                        //Debug.Log("Distance is greater than 10 = " + dist + " and I am agent - " + this.gameObject.name);
+                        SetToFollow();
+                    }
                 }
             }
-        }
-        if(this.current_state == State.FOLLOWING)
-        {
-            Follow();
+            if (current_state == State.FOLLOWING)
+            {
+                Follow();
+            }
         }
 
-        if (has_target)
+        if (has_target && current_state!= State.COVERING)
         {
             if (attack_cd <= 0)
             {
@@ -68,30 +80,39 @@ public class AI_State : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        RegenHealth();
+    }
+
+    public State GetState()
+    {
+        return current_state;
+    }
     public void SetToFollow()
     {
-        this.current_state = State.FOLLOWING;
+        current_state = State.FOLLOWING;
     }
 
     private void Follow()
     {
         agent.destination = player.transform.position;
         
-        if(dist <= 5f)
+        if(dist_to_player <= 5f)
         {
-            this.current_state = State.IDLE;
+            current_state = State.IDLE;
             agent.destination = this.gameObject.transform.position;
         }
     }
 
     public void SetToGuard()
     {
-        this.current_state = State.GUARDING;
+        current_state = State.GUARDING;
     }
 
     public void SetToIdle()
     {
-        this.current_state = State.IDLE;
+        current_state = State.IDLE;
     }
 
     public void OnTriggerEnter(Collider other)
@@ -117,5 +138,30 @@ public class AI_State : MonoBehaviour
         gameObject.transform.LookAt(current_target.transform);
         Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
         Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);    
+    }
+
+    private void RegenHealth()
+    {
+        if (health < 10)
+        {
+            if (regen_timer <= 0)
+            {
+                health++;
+                regen_timer = 10f;
+            }
+            else
+            {
+                regen_timer -= Time.deltaTime;
+            }
+        }    
+        if (health > 3)
+        {
+            current_state = State.IDLE;
+        }
+    }
+
+    public void TakeDamage()
+    {
+        health--;
     }
 }

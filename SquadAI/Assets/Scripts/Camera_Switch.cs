@@ -72,7 +72,7 @@ public class Camera_Switch : MonoBehaviour
         // List<GameObject> Selected = new List<GameObject>();
         foreach (GameObject t in root)
         {
-            if (t.layer == layer && player_script.InTacticalCam())
+            if (t.layer == layer && t.tag == "Wall" && player_script.InTacticalCam())
             {
                 //Selected.Add(t);
                 t.GetComponent<Renderer>().material = m_off;

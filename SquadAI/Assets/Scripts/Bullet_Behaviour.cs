@@ -20,6 +20,18 @@ public class Bullet_Behaviour : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //Debug.Log("I shot - " + collision.gameObject.tag);
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.GetComponent<Player_Movement_FPS>().TakeDamage();
+        }
+        if (collision.gameObject.tag == "AI")
+        {
+            collision.gameObject.GetComponent<AI_State>().TakeDamage();
+        }
+        if (collision.gameObject.tag == "Enemy")
+        {
+            //collision.gameObject.GetComponent<Enemy_Behaviour>().TakeDamage();
+        }
         Destroy(this.gameObject);
     }
 }

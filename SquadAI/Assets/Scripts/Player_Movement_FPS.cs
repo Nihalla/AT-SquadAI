@@ -10,13 +10,14 @@ public class Player_Movement_FPS : MonoBehaviour
     public Vector2 move;
     public Vector2 look;
     public float deadzone = 0.1F;
-    public float speed = 5.0f;
+    public float speed = 3.0f;
     public float turn_smooth_time = 0.1f;
     private float turn_smooth_velocity = 0.5f;
     public float speed_multiplier = 1.0f;
     public float turn_speed_max = 1f;
     private float jump_velocity = 0.0f;
     public float gravity = 9.8f;
+    [SerializeField] private int health = 10;
 
     CharacterController controller;
     public Transform cam_transform;
@@ -61,10 +62,12 @@ public class Player_Movement_FPS : MonoBehaviour
             if (move.y > 0)
             {
                 move_forward = true;
+                speed = 3.0f;
             }
             else
             {
                 move_forward = false;
+                speed = 1.5f;
             }
             if ((move_forward) || (look.x != 0))
             {
@@ -147,7 +150,10 @@ public class Player_Movement_FPS : MonoBehaviour
     {
         return in_tactical;
     }
-
+    public void TakeDamage()
+    {
+        health--;
+    }
     private void Shoot()
     {
         if (!in_tactical)
