@@ -134,7 +134,8 @@ public class AI_Manager : MonoBehaviour
                 }
                 else if (selected_char != null && hit.transform.tag == "Enemy")
                 {
-
+                    selected_char.gameObject.GetComponent<AI_State>().StartChase(hit.transform.gameObject);
+                    Deselect();
                 }
             }
         }
@@ -162,6 +163,4 @@ public class AI_Manager : MonoBehaviour
             selected_char.gameObject.GetComponent<AI_State>().SetToIdle();
         }
     }
-
-    
 }
