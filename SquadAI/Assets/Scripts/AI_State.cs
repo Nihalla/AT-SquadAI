@@ -154,7 +154,7 @@ public class AI_State : MonoBehaviour
                 regen_timer -= Time.deltaTime;
             }
         }    
-        if (health > 3)
+        if (health > 3 && current_state == State.COVERING)
         {
             current_state = State.IDLE;
         }

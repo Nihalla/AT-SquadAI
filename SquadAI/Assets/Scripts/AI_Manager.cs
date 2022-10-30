@@ -59,6 +59,11 @@ public class AI_Manager : MonoBehaviour
         {
             Deselect();
         }
+        /*if (selected_char != null)
+        {
+            Debug.Log("this is character - " + selected_char.name);
+            Debug.Log(selected_char.gameObject.GetComponent<AI_State>().GetState());
+        }*/
         
     }
 
@@ -105,7 +110,7 @@ public class AI_Manager : MonoBehaviour
             
             if (Physics.Raycast(ray, out hit, 1000f))
             {
-                Debug.Log(hit.transform.tag);
+                //Debug.Log(hit.transform.tag);
 
                 if (selected_char == null && hit.transform.tag == "AI")
                 {
@@ -113,7 +118,9 @@ public class AI_Manager : MonoBehaviour
                 }
                 else if (selected_char != null && hit.transform.tag == "Floor")
                 {
+                    
                     selected_char.gameObject.GetComponent<AI_State>().SetToGuard();
+                    //Debug.Log(selected_char.gameObject.GetComponent<AI_State>().GetState());
                     agent.destination = hit.point;
                 }
                 else if (selected_char == hit.transform)
