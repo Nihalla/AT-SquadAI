@@ -21,6 +21,7 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         if (has_target)
         {
+            gameObject.transform.LookAt(target.gameObject.transform);
             if (attack_cd <= 0)
             {
                 Attack(target.gameObject);
@@ -76,7 +77,7 @@ public class Enemy_Behaviour : MonoBehaviour
 
     private void Attack(GameObject current_target)
     {
-        gameObject.transform.LookAt(current_target.transform);
+        
         Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
         Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);
     }

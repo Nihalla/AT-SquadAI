@@ -132,6 +132,10 @@ public class AI_Manager : MonoBehaviour
                     Deselect();
                     AssignActiveChar(hit);
                 }
+                else if (selected_char != null && hit.transform.tag == "Enemy")
+                {
+
+                }
             }
         }
     }
