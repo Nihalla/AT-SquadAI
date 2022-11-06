@@ -52,6 +52,12 @@ public class AI_State : MonoBehaviour
     void Update()
     {
         //Debug.DrawRay(transform.position, (target.transform.position - transform.position), Color.red);
+        if (has_target && target == null)
+        {
+            has_target = false;
+            current_state = State.IDLE;
+            nearest_enemy = null;
+        }
         if (health <= 3)
         {
             current_state = State.COVERING;
@@ -112,7 +118,7 @@ public class AI_State : MonoBehaviour
             }
         }
 
-        if (has_target && current_state!= State.COVERING)
+        if (has_target && current_state != State.COVERING)
         {
             if (attack_cd <= 0)
             {

@@ -17,7 +17,7 @@ public class Camera_Switch : MonoBehaviour
     private int layer = 3;
     public Material m_on;
     public Material m_off;
-    private GameObject[] objects;
+    private List<GameObject> objects = new();
 
     // Start is called before the first frame update
     void Awake()
@@ -67,33 +67,44 @@ public class Camera_Switch : MonoBehaviour
         }
     }
 
-    private void GetObjectsInLayer(GameObject[] root, int layer)
+    private void GetObjectsInLayer(List<GameObject> root, int layer)
     {
         // List<GameObject> Selected = new List<GameObject>();
         foreach (GameObject t in root)
         {
-            if (t.layer == layer && t.tag == "Wall" && player_script.InTacticalCam())
+            if (t != null)
             {
-                //Selected.Add(t);
-                t.GetComponent<Renderer>().material = m_off;
-            }
-            else if (t.layer == layer && !player_script.InTacticalCam())
-            {
-                t.GetComponent<Renderer>().material = m_on;
+                if (t.layer == layer && t.tag == "Wall" && player_script.InTacticalCam())
+                {
+                    //Selected.Add(t);
+                    t.GetComponent<Renderer>().material = m_off;
+                }
+                else if (t.layer == layer && !player_script.InTacticalCam())
+                {
+                    t.GetComponent<Renderer>().material = m_on;
+                }
             }
         }
-
     }
 
-    private static GameObject[] GetSceneObjects()
+    private static List<GameObject> GetSceneObjects()
     {
         return Resources.FindObjectsOfTypeAll<GameObject>()
-                .Where(go => go.hideFlags == HideFlags.None).ToArray();
+                .Where(go => go.hideFlags == HideFlags.None).ToList();
     }
 
     public void SwitchOpacity()
     {
         GetObjectsInLayer(objects, layer);
+    }
+
+    public void RemoveEnemy(GameObject enemy)
+    {
+        //enemy_NPCs. 
+        if (objects.Contains(enemy))
+        {
+            objects.Remove(enemy);
+        }
     }
 
 }

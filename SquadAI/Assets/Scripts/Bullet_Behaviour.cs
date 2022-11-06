@@ -30,7 +30,7 @@ public class Bullet_Behaviour : MonoBehaviour
         }
         if (collision.gameObject.tag == "Enemy")
         {
-            //collision.gameObject.GetComponent<Enemy_Behaviour>().TakeDamage();
+            collision.gameObject.GetComponent<Enemy_Behaviour>().TakeDamage();
         }
         Destroy(this.gameObject);
     }

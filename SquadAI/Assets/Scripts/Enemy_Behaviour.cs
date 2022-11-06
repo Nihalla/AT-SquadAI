@@ -6,14 +6,17 @@ public class Enemy_Behaviour : MonoBehaviour
 {
     private GameObject target;
     private bool has_target;
-    private float attack_cd = 2f;
+    private float attack_cd = 1f;
     private int health = 10;
     [SerializeField] private GameObject bullet;
+    private Player_Suggestion manager_script;
+    private Camera_Switch camera_script;
    // private float respawn_timer = 5f;
     // Start is called before the first frame update
     void Start()
     {
-        
+        manager_script = GameObject.FindGameObjectWithTag("Game_Manager").GetComponent<Player_Suggestion>();
+        camera_script = GameObject.FindGameObjectWithTag("Camera_Manager").GetComponent<Camera_Switch>();
     }
 
     // Update is called once per frame
@@ -25,7 +28,7 @@ public class Enemy_Behaviour : MonoBehaviour
             if (attack_cd <= 0)
             {
                 Attack(target.gameObject);
-                attack_cd = 2f;
+                attack_cd = 1f;
             }
             else
             {
@@ -34,6 +37,8 @@ public class Enemy_Behaviour : MonoBehaviour
         }
         if (health <= 0)
         {
+            camera_script.RemoveEnemy(this.gameObject);
+            manager_script.RemoveEnemy(this.gameObject);
             Destroy(this.gameObject);
         }
     }
@@ -79,6 +84,6 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         
         Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
-        //Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);
+        Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);
     }
 }

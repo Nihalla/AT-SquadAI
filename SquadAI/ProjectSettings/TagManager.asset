@@ -11,6 +11,8 @@ TagManager:
   - Wall
   - AI_Body
   - AI_Manager
+  - Game_Manager
+  - Camera_Manager
   layers:
   - Default
   - TransparentFX
