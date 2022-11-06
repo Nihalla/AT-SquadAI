@@ -14,7 +14,7 @@ public class Camera_Switch : MonoBehaviour
     private PlayerInputController controls;
     private Player_Movement_FPS player_script;
     private Tactical_Camera_Controls cam_script;
-    private int layer = 2;
+    private int layer = 3;
     public Material m_on;
     public Material m_off;
     private GameObject[] objects;

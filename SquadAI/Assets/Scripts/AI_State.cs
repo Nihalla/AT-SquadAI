@@ -51,6 +51,7 @@ public class AI_State : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.DrawRay(transform.position, (target.transform.position - transform.position), Color.red);
         if (health <= 3)
         {
             current_state = State.COVERING;
@@ -98,10 +99,12 @@ public class AI_State : MonoBehaviour
 
         if (current_state == State.CHASING)
         {
+            transform.LookAt(target.transform);
+            //RaycastHit hit;
             var distance_to_target = Vector3.Distance(target.transform.position, transform.position);
-            if (distance_to_target >= 20)
+            if (distance_to_target >= 15)
             {
-                agent.ResetPath();
+                agent.destination = target.transform.position;
             }
             else
             {
@@ -184,10 +187,19 @@ public class AI_State : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         //Debug.Log(other);
+
         if (has_target == false && other.gameObject.tag == "Enemy")
         {
             target = other.gameObject;
-            has_target = true;
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, (target.transform.position - transform.position), out hit))
+            {
+                if (hit.transform == target.transform)
+                {
+                    has_target = true;
+                }
+            }  
         }
     }
     public void OnTriggerStay(Collider other)
@@ -195,7 +207,24 @@ public class AI_State : MonoBehaviour
         if (has_target == false && (other.gameObject.tag == "Enemy"))
         {
             target = other.gameObject;
-            has_target = true;
+            if (has_target == false && other.gameObject.tag == "Enemy")
+            {
+                target = other.gameObject;
+                RaycastHit hit;
+
+                if (Physics.Raycast(transform.position, (target.transform.position - transform.position), out hit))
+                {
+                    if (hit.transform == target.transform)
+                    {
+                        has_target = true;
+                    }
+                    else
+                    {
+                        has_target = false;
+                        current_state = State.IDLE;
+                    }
+                }
+            }
         }
     }
 
@@ -211,8 +240,22 @@ public class AI_State : MonoBehaviour
     private void Attack(GameObject current_target)
     {
         gameObject.transform.LookAt(current_target.transform);
-        Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
-        Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);    
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, (target.transform.position - transform.position), out hit))
+        {
+            
+            if (hit.transform == target.transform)
+            {
+                Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
+                Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);
+            }
+            else
+            {
+                has_target = false;
+                current_state = State.IDLE;
+            }
+        } 
     }
 
     private void RegenHealth()

@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 69183791}
   - component: {fileID: 69183790}
   - component: {fileID: 69183789}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: OuterWalls (3)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -882,7 +882,7 @@ GameObject:
   - component: {fileID: 295206325}
   - component: {fileID: 295206324}
   - component: {fileID: 295206323}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: OuterWalls (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1222,6 +1222,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selected_char: {fileID: 0}
   tactical_cam: {fileID: 1483920716}
+  ignore_layer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &483187892
 Transform:
   m_ObjectHideFlags: 0
@@ -1968,7 +1971,7 @@ GameObject:
   - component: {fileID: 1073075414}
   - component: {fileID: 1073075413}
   - component: {fileID: 1073075412}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: Wall (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2417,7 +2420,7 @@ GameObject:
   - component: {fileID: 1184221328}
   - component: {fileID: 1184221327}
   - component: {fileID: 1184221326}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: OuterWalls
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -3600,7 +3603,7 @@ GameObject:
   - component: {fileID: 1885518580}
   - component: {fileID: 1885518579}
   - component: {fileID: 1885518578}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: OuterWalls (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -3795,7 +3798,7 @@ GameObject:
   - component: {fileID: 1986224526}
   - component: {fileID: 1986224525}
   - component: {fileID: 1986224524}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: Wall
   m_TagString: Wall
   m_Icon: {fileID: 0}

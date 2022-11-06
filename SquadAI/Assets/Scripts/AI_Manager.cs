@@ -16,6 +16,7 @@ public class AI_Manager : MonoBehaviour
     private GameObject player;
     private GameObject[] friendly_NPC;
     private GameObject[] cover_points;
+    [SerializeField] private LayerMask ignore_layer;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -116,7 +117,7 @@ public class AI_Manager : MonoBehaviour
             RaycastHit hit;
 
             
-            if (Physics.Raycast(ray, out hit, 1000f))
+            if (Physics.Raycast(ray, out hit, 1000f, ~ignore_layer))
             {
                 //Debug.Log(hit.transform.tag);
 
