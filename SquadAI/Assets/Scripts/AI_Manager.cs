@@ -73,33 +73,41 @@ public class AI_Manager : MonoBehaviour
         {
             //Debug.Log("Hi my name is - " + NPC.name);
             AI_State script = NPC.GetComponent<AI_State>();
-            auto_move_agent = NPC.GetComponent<NavMeshAgent>();
+            
 
             if (script.GetState() == AI_State.State.COVERING && !script.in_cover)
             {
-                //Debug.Log("I am looking for cover!");
-                float smallest_dist = 999f;
-                Vector3 go_to = NPC.transform.position;
-                foreach (GameObject point in cover_points)
-                {
-                    //Debug.Log(point.GetComponent<Cover>().IsTaken());
-                    if (!point.GetComponent<Cover>().IsTaken())
-                    {
-                        //Debug.Log("There are free cover points!");
-                        float dist = Vector3.Distance(NPC.transform.position, point.transform.position);
-                        if (dist < smallest_dist)
-                        {
-                            smallest_dist = dist;
-                            go_to = point.transform.position;
-                        }
-                    }
-                }
-                //Debug.Log("I should be moving to location - " + go_to + " the smallest distance I found was - " + smallest_dist);
-                auto_move_agent.destination = go_to;
+                FindCover(NPC);
             }
         }
     }
 
+    public void FindCover(GameObject NPC)
+    {
+        NPC.GetComponent<AI_State>().SetToCover();
+        auto_move_agent = NPC.GetComponent<NavMeshAgent>();
+        
+        float smallest_dist = 999f;
+        Vector3 go_to = NPC.transform.position;
+        auto_move_agent.stoppingDistance = 0f;
+        foreach (GameObject point in cover_points)
+        {
+            //Debug.Log(point.GetComponent<Cover>().IsTaken());
+            if (!point.GetComponent<Cover>().IsTaken())
+            {
+                //Debug.Log("There are free cover points!");
+                float dist = Vector3.Distance(NPC.transform.position, point.transform.position);
+                if (dist < smallest_dist)
+                {
+                    smallest_dist = dist;
+                    go_to = point.transform.position;
+                }
+            }
+        }
+        //Debug.Log("I should be moving to location - " + go_to + " the smallest distance I found was - " + smallest_dist);
+        auto_move_agent.destination = go_to;
+        //auto_move_agent.
+    }
     private void SelectCharacter()
     {
         if (player_script.InTacticalCam())

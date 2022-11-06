@@ -11,7 +11,7 @@ public class AI_State : MonoBehaviour
     private NavMeshAgent agent;
     public GameObject bullet;
     private float attack_cd = 0.5f;
-    private int max_health = 7;
+    private int max_health = 10;
     [SerializeField] private int health;
     public bool in_cover = false;
     private float regen_timer = 10f;
@@ -20,6 +20,7 @@ public class AI_State : MonoBehaviour
     private float rotation_speed = 1000f;
     private float desired_rotation;
     private float damping = 10f;
+    public GameObject nearest_enemy = null;
     [SerializeField] private bool has_target = false;
     [SerializeField] private GameObject target;
     //private Collider line_of_sight;
@@ -32,6 +33,7 @@ public class AI_State : MonoBehaviour
         GUARDING = 3,
         COVERING = 4,
         CHASING = 5,
+        ATTACKING = 6,
         INVALID = -1
     };
 
@@ -89,12 +91,17 @@ public class AI_State : MonoBehaviour
             }
         }
 
+        if (current_state != State.ATTACKING)
+        {
+            nearest_enemy = null;
+        }
+
         if (current_state == State.CHASING)
         {
             var distance_to_target = Vector3.Distance(target.transform.position, transform.position);
             if (distance_to_target >= 20)
             {
-                agent.destination = target.transform.position;
+                agent.ResetPath();
             }
             else
             {
@@ -133,11 +140,11 @@ public class AI_State : MonoBehaviour
     private void Follow()
     {
         agent.destination = player.transform.position;
-        
-        if(dist_to_player <= 5f)
+        agent.stoppingDistance = 5f;
+        if (dist_to_player <= 5f)
         {
             current_state = State.IDLE;
-            agent.destination = transform.position;
+            agent.ResetPath();
         }
     }
 
@@ -145,7 +152,15 @@ public class AI_State : MonoBehaviour
     {
         current_state = State.GUARDING;
     }
+    public void SetToCover()
+    {
+        current_state = State.COVERING;
+    }
 
+    public void SetToAttack()
+    {
+        current_state = State.ATTACKING;
+    }
     public void SetToIdle()
     {
         current_state = State.IDLE;
@@ -214,7 +229,7 @@ public class AI_State : MonoBehaviour
                 regen_timer -= Time.deltaTime;
             }
         }    
-        if (health > 3 && current_state == State.COVERING)
+        if (health > 3 && current_state == State.COVERING && in_cover)
         {
             current_state = State.IDLE;
         }
@@ -230,5 +245,10 @@ public class AI_State : MonoBehaviour
         has_target = true;
         target = selected_target;
         current_state = State.CHASING;
+    }
+
+    public int GetHealth()
+    {
+        return health;
     }
 }

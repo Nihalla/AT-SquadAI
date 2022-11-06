@@ -6,7 +6,7 @@ public class Enemy_Behaviour : MonoBehaviour
 {
     private GameObject target;
     private bool has_target;
-    private float attack_cd = 1f;
+    private float attack_cd = 2f;
     private int health = 10;
     [SerializeField] private GameObject bullet;
    // private float respawn_timer = 5f;
@@ -25,7 +25,7 @@ public class Enemy_Behaviour : MonoBehaviour
             if (attack_cd <= 0)
             {
                 Attack(target.gameObject);
-                attack_cd = 1f;
+                attack_cd = 2f;
             }
             else
             {
@@ -79,6 +79,6 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         
         Vector3 bullet_spawn = this.gameObject.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).position;
-        Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);
+        //Instantiate(bullet, bullet_spawn, gameObject.transform.rotation);
     }
 }
