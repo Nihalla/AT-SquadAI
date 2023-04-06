@@ -1,22 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy_Behaviour : MonoBehaviour
 {
     private GameObject target;
     private bool has_target;
     private float attack_cd = 1f;
-    private int health = 10;
+    private int health = 5;
     [SerializeField] private GameObject bullet;
     private Player_Suggestion manager_script;
     private Camera_Switch camera_script;
-   // private float respawn_timer = 5f;
+    private NavMeshAgent agent;
+    private float timer = 3f;
+    private float max_timer = 3f;
+    private Vector2 rand_range = new Vector2(-3, 3);
+    // private float respawn_timer = 5f;
     // Start is called before the first frame update
     void Start()
     {
         manager_script = GameObject.FindGameObjectWithTag("Game_Manager").GetComponent<Player_Suggestion>();
         camera_script = GameObject.FindGameObjectWithTag("Camera_Manager").GetComponent<Camera_Switch>();
+        agent = gameObject.GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -45,7 +51,23 @@ public class Enemy_Behaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-
+        if (has_target)
+        {
+            agent.destination = target.transform.position;
+        }
+        else
+        {
+            if (timer <= 0)
+            {
+                Vector3 destination = transform.position + new Vector3(Random.Range(rand_range.x, rand_range.y), 0, Random.Range(rand_range.x, rand_range.y));
+                agent.SetDestination(destination);
+                timer = max_timer;
+            }
+            else
+            {
+                timer -= Time.deltaTime;
+            }
+        }
     }
 
     public void TakeDamage()
